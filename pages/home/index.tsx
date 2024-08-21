@@ -6,18 +6,52 @@ import React, { useState, useRef } from "react";
 import * as XLSX from "xlsx";
 import UploadedStructure from "@components/cards/uploaded";
 import Link from "next/link";
-import { ExcelDataItem } from "src/interfaces";
+import { ExcelDataItem, StructuredExcel } from "src/interfaces";
+import { Config } from "aws-sdk";
+import ConfigQuestion from "@components/cards/configQuestion";
 
 const { Title } = Typography;
 
 const HomeList: React.FC = () => {
 	const [excelData, setExcelData] = useState<any[]>([]);
 	const [fileUploaded, setFileUploaded] = useState<boolean>(false); // State to track file upload
-	const [constructedData, setConstructedData] = useState<ExcelDataItem[]>([]); // State to store constructed data
+	const [constructedData, setConstructedData] = useState<StructuredExcel[]>([]); // State to store constructed data
 	const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input element
 
 	// Assuming your JSON data is stored in a variable named `jsonData`
+	function convertToStructuredExcel(data: ExcelDataItem[]): StructuredExcel[] {
+		const result: StructuredExcel[] = [];
 
+		data.forEach((item) => {
+			// Find the group with the same typeOfKnowledge
+			let group = result.find(
+				(g) => g.typeOfKnowledge === item.typeOfKnowledge
+			);
+
+			// If the group doesn't exist, create it
+			if (!group) {
+				group = {
+					typeOfKnowledge: item.typeOfKnowledge,
+					typeOfSection: "",
+					topicList: [],
+				};
+				result.push(group);
+			}
+
+			// Add the current item as a structuredRow to the group
+			group.topicList.push({
+				hint: "",
+				typeOfTopic: "",
+				topic: item.topic,
+				recognize: item.recognize ?? "",
+				understand: item.understand ?? "",
+				apply: item.apply ?? "",
+				highlyApplied: item.highlyApplied ?? "",
+			});
+		});
+
+		return result;
+	}
 	const handleFileUpload = (file: File) => {
 		const reader = new FileReader();
 
@@ -47,28 +81,33 @@ const HomeList: React.FC = () => {
 					}
 				});
 
-				setExcelData(data);
-				const excelData: ExcelDataItem[] = (data.slice(1) as unknown[][]).map(
-					(row) => {
-						if (Array.isArray(row)) {
-							return {
-								typeOfKnowledge: row[0] as string,
-								topic: row[1] as string,
-								recognize: row[2]?.toString() ?? null,
-								understand: row[3]?.toString() ?? null,
-								apply: row[4]?.toString() ?? null,
-								highlyApplied: row[5]?.toString() ?? null,
-							};
-						} else {
-							throw new Error("Row is not an array");
-						}
+				const slice = data.slice(1);
+				let excelDataConvert: ExcelDataItem[] = slice.map((row) => {
+					if (Array.isArray(row)) {
+						return {
+							typeOfKnowledge: row[0] as string,
+							topic: row[1] as string,
+							recognize: row[2]?.toString() ?? "0",
+							understand: row[3]?.toString() ?? "0",
+							apply: row[4]?.toString() ?? "0",
+							highlyApplied: row[5]?.toString() ?? "0",
+						};
+					} else {
+						throw new Error("Row is not an array");
 					}
-				);
-				setConstructedData(excelData);
+				});
+				//exclude first row of excelData
+				console.log("excelData");
+				console.log(excelDataConvert);
+				const structuredExcel = convertToStructuredExcel(excelDataConvert);
+				console.log("structuredExcel");
+				console.log(structuredExcel);
+				setConstructedData(structuredExcel);
 				setFileUploaded(true); // Set fileUploaded to true after successful upload
 				if (fileInputRef.current) {
 					fileInputRef.current.value = ""; // Reset file input value after successful upload
 				}
+				setExcelData(data);
 			}
 		};
 
@@ -179,6 +218,11 @@ const HomeList: React.FC = () => {
 							fileUploaded={fileUploaded}
 							handleRemoveFile={handleRemoveFile}
 						/>
+					)}
+				</div>
+				<div>
+					{excelData.length > 0 && (
+						<ConfigQuestion dataSource={constructedData} />
 					)}
 				</div>
 			</Space>

@@ -20,9 +20,7 @@ const UploadedStructure: React.FC<UploadedStructureProps> = (props) => {
 			  }))
 			: [];
 	//useEffect printout excelData
-	useEffect(() => {
-		console.log("excelData", props.excelData);
-	}, []);
+
 	return (
 		<Card
 			style={{
