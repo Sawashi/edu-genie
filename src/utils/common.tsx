@@ -17,6 +17,7 @@
 const apikey = process.env.NEXT_PUBLIC_API_KEY ?? "";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from "fs";
+import { StructuredRow } from "src/interfaces";
 // Get your API key from https://makersuite.google.com/app/apikey
 // Access your API key as an environment variable
 export const genAI = new GoogleGenerativeAI(apikey);
@@ -59,4 +60,10 @@ export async function displayChatTokenCount(model: any, chat: any, msg: any) {
 	const history = await chat.getHistory();
 	const msgContent = { role: "user", parts: [{ text: msg }] };
 	await displayTokenCount(model, { contents: [...history, msgContent] });
+}
+export async function generateSingleQuestion(
+	typeOfKnowledge: string,
+	topicList: StructuredRow[]
+) {
+	
 }

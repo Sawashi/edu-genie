@@ -1,4 +1,4 @@
-import { Typography, Button, Space, Modal } from "antd";
+import { Typography, Button, Space, Modal, Spin, Result } from "antd";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import * as ExcelJS from "exceljs";
@@ -6,9 +6,10 @@ import React, { useState, useRef } from "react";
 import * as XLSX from "xlsx";
 import UploadedStructure from "@components/cards/uploaded";
 import Link from "next/link";
-import { ExcelDataItem, StructuredExcel } from "src/interfaces";
+import { ExcelDataItem, InterfaceExam, StructuredExcel } from "src/interfaces";
 import { Config } from "aws-sdk";
 import ConfigQuestion from "@components/cards/configQuestion";
+import ResultExam from "@components/cards/resultQuestion";
 
 const { Title } = Typography;
 
@@ -16,7 +17,9 @@ const HomeList: React.FC = () => {
 	const [excelData, setExcelData] = useState<any[]>([]);
 	const [fileUploaded, setFileUploaded] = useState<boolean>(false); // State to track file upload
 	const [constructedData, setConstructedData] = useState<StructuredExcel[]>([]); // State to store constructed data
+	const [resultData, setResultData] = useState<InterfaceExam[]>([]); // State to store result data
 	const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input element
+	const [loading, setLoading] = useState<boolean>(false);
 
 	// Assuming your JSON data is stored in a variable named `jsonData`
 	function convertToStructuredExcel(data: ExcelDataItem[]): StructuredExcel[] {
@@ -222,9 +225,21 @@ const HomeList: React.FC = () => {
 				</div>
 				<div>
 					{excelData.length > 0 && (
-						<ConfigQuestion dataSource={constructedData} />
+						<ConfigQuestion
+							dataSource={constructedData}
+							setDataSource={setConstructedData}
+							setLoading={setLoading}
+							setResultData={setResultData}
+						/>
 					)}
 				</div>
+				{/* <div>
+					{constructedData.map((data, index) => (
+						<div key={index}>{JSON.stringify(data)}</div>
+					))}
+				</div> */}
+				{loading && <Spin />}
+				{resultData.length > 0 && <ResultExam dataSource={resultData} />}
 			</Space>
 		</>
 	);

@@ -27,8 +27,14 @@ export interface ResponseQuestion {
 	options: string[];
 	answer: string;
 }
-export interface interfaceExam {
+export interface InterfaceExam {
 	typeOfKnowledge: string;
-	paragraph: string;
+	paragraph?: string;
 	questions: ResponseQuestion[];
+}
+//Response from Gemini
+export interface ResponseExam {
+	question: string;
+	options: string[];
+	answer: string;
 }

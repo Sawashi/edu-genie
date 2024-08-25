@@ -1,11 +1,16 @@
 import { Button, Card, Table, Typography, Select, Input } from "antd";
 import { useState, useEffect } from "react";
-import { StructuredExcel, StructuredRow } from "src/interfaces";
+import { generateExam } from "src/apis/gemini";
+import { InterfaceExam, StructuredExcel, StructuredRow } from "src/interfaces";
+import { runGemini } from "src/utils/common";
 const { Option } = Select;
 const { Title } = Typography;
 
 interface ConfigQuestionProps {
 	dataSource: StructuredExcel[];
+	setDataSource: React.Dispatch<React.SetStateAction<StructuredExcel[]>>;
+	setLoading: React.Dispatch<React.SetStateAction<boolean>>;
+	setResultData: React.Dispatch<React.SetStateAction<InterfaceExam[]>>;
 }
 
 const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
@@ -25,11 +30,13 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 		setTypeOfKnowledgeConfig(initialConfig);
 	}, [props.dataSource]);
 
-	function logData() {
-		console.log("typeOfKnowledgeConfig");
-		console.log(typeOfKnowledgeConfig);
-		console.log("topicConfig");
+	async function GenerateExam() {
+		console.log("Data in:");
 		console.log(topicConfig);
+		props.setDataSource(topicConfig);
+		//const response = await runGemini("Hello");
+		props.setLoading(true);
+		await generateExam(topicConfig);
 	}
 
 	const handleTypeOfSectionChange = (
@@ -41,29 +48,36 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 				(item) => item.typeOfKnowledge === record.typeOfKnowledge
 			);
 
+			let updatedConfig = prev;
+
 			if (index !== -1) {
-				const updatedConfig = [...prev];
+				updatedConfig = [...prev];
 				updatedConfig[index] = {
 					...updatedConfig[index],
 					typeOfSection: value,
 				};
-				return updatedConfig;
 			}
 
-			return prev;
-		});
-		const sectionMapping: { [key: string]: string } =
-			typeOfKnowledgeConfig.reduce((acc, item) => {
-				acc[item.typeOfKnowledge] = item.typeOfSection;
-				return acc;
-			}, {} as { [key: string]: string });
+			// Compute the sectionMapping within the setTypeOfKnowledgeConfig
+			const sectionMapping: { [key: string]: string } = updatedConfig.reduce(
+				(acc, item) => {
+					acc[item.typeOfKnowledge] = item.typeOfSection;
+					return acc;
+				},
+				{} as { [key: string]: string }
+			);
 
-		// Update topicConfig
-		const updatedArray2 = topicConfig.map((item) => ({
-			...item,
-			typeOfSection: sectionMapping[item.typeOfKnowledge] || item.typeOfSection,
-		}));
-		setTopicConfig(updatedArray2);
+			// Update topicConfig based on the updated typeOfKnowledgeConfig
+			const updatedArray2 = topicConfig.map((item) => ({
+				...item,
+				typeOfSection:
+					sectionMapping[item.typeOfKnowledge] || item.typeOfSection,
+			}));
+
+			setTopicConfig(updatedArray2);
+
+			return updatedConfig;
+		});
 	};
 
 	const handleTopicTypeChange = (
@@ -163,16 +177,18 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 		>
 			<Title level={3}>Config data generate</Title>
 			<div>
-				<h2>Config type of knowledge</h2>
 				<Table
 					dataSource={topicConfig}
 					columns={typeOfKnowledgeColumns}
 					rowKey="typeOfKnowledge"
 					pagination={false}
 				/>
-
-				<h2>Config topics</h2>
-				{topicConfig.map((item, index) => (
+			</div>
+			<br />
+			<h2>Config topics</h2>
+			{topicConfig.map((item, index) => (
+				<div>
+					<h3>{item.typeOfKnowledge}</h3>
 					<Table
 						key={item.typeOfKnowledge}
 						dataSource={item.topicList}
@@ -181,10 +197,11 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 						pagination={false}
 						style={{ marginBottom: "20px" }}
 					/>
-				))}
-			</div>
-			<Button type="primary" onClick={logData}>
-				Log data
+				</div>
+			))}
+
+			<Button type="primary" onClick={GenerateExam}>
+				Submit
 			</Button>
 		</Card>
 	);
