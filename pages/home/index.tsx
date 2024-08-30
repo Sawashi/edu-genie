@@ -100,11 +100,9 @@ const HomeList: React.FC = () => {
 					}
 				});
 				//exclude first row of excelData
-				console.log("excelData");
-				console.log(excelDataConvert);
+
 				const structuredExcel = convertToStructuredExcel(excelDataConvert);
-				console.log("structuredExcel");
-				console.log(structuredExcel);
+
 				setConstructedData(structuredExcel);
 				setFileUploaded(true); // Set fileUploaded to true after successful upload
 				if (fileInputRef.current) {

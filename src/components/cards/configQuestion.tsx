@@ -36,7 +36,7 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 		props.setDataSource(topicConfig);
 		//const response = await runGemini("Hello");
 		props.setLoading(true);
-		await generateExam(topicConfig);
+		let result = await generateExam(topicConfig);
 	}
 
 	const handleTypeOfSectionChange = (
@@ -176,6 +176,7 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 			}}
 		>
 			<Title level={3}>Config data generate</Title>
+			<h2>Config type of section</h2>
 			<div>
 				<Table
 					dataSource={topicConfig}

@@ -22,6 +22,8 @@ import { StructuredRow } from "src/interfaces";
 // Access your API key as an environment variable
 export const genAI = new GoogleGenerativeAI(apikey);
 export async function runGemini(msg: string) {
+	//delay 1s for not spamming the api
+	await new Promise((resolve) => setTimeout(resolve, 1000));
 	// For dialog language tasks (like chat), use the gemini-pro model
 	const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
@@ -30,7 +32,7 @@ export async function runGemini(msg: string) {
 	const result = await chat.sendMessage(msg);
 	const response = result.response;
 	const text = response.text();
-	console.log(text);
+	console.log("Gemini: ", text);
 	return text;
 }
 // Converts local file information to a GoogleGenerativeAI.Part object
@@ -64,6 +66,4 @@ export async function displayChatTokenCount(model: any, chat: any, msg: any) {
 export async function generateSingleQuestion(
 	typeOfKnowledge: string,
 	topicList: StructuredRow[]
-) {
-	
-}
+) {}
