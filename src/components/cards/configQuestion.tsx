@@ -36,7 +36,8 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 		props.setDataSource(topicConfig);
 		//const response = await runGemini("Hello");
 		props.setLoading(true);
-		let result = await generateExam(topicConfig);
+		let result: InterfaceExam[] = await generateExam(topicConfig);
+		props.setResultData(result);
 	}
 
 	const handleTypeOfSectionChange = (

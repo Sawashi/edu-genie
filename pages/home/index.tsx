@@ -2,7 +2,7 @@ import { Typography, Button, Space, Modal, Spin, Result } from "antd";
 import { UploadOutlined, DownloadOutlined } from "@ant-design/icons";
 import { saveAs } from "file-saver";
 import * as ExcelJS from "exceljs";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, use, useEffect } from "react";
 import * as XLSX from "xlsx";
 import UploadedStructure from "@components/cards/uploaded";
 import Link from "next/link";
@@ -20,7 +20,113 @@ const HomeList: React.FC = () => {
 	const [resultData, setResultData] = useState<InterfaceExam[]>([]); // State to store result data
 	const fileInputRef = useRef<HTMLInputElement>(null); // Ref for file input element
 	const [loading, setLoading] = useState<boolean>(false);
-
+	// useEffect(() => {
+	// 	setResultData([
+	// 		{
+	// 			typeOfKnowledge: "Pronounce",
+	// 			questions: [
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"Select the correct pronunciation of the underlined vowel in the word '**lunch**'.",
+	// 					options: ["/ʌ/", "/u/", "/ʊ/"],
+	// 					answer: "/ʌ/",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"Which word below has the same vowel sound as the underlined vowel in **'puncture'**?",
+	// 					options: ["putt", "put", "punch", "puck"],
+	// 					answer: "puck",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question: "In which word is the H not pronounced?",
+	// 					options: ["hospital", "hour", "honor"],
+	// 					answer: "hospital",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"Which of the following correctly identifies the H sound pronunciation in the word 'honor'?",
+	// 					options: ["Silent H", "Aspirated H", "Glottal H", "Voiced H"],
+	// 					answer: "Aspirated H",
+	// 				},
+	// 			],
+	// 		},
+	// 		{
+	// 			typeOfKnowledge: "Reading",
+	// 			paragraph:
+	// 				"In 1831, English scientist Charles Darwin embarked on a five-year voyage aboard the HMS Beagle, which circumnavigated the globe. During this expedition, he meticulously observed and documented the diverse flora and fauna encountered in various regions, including South America, the Galapagos Islands, and Australia. Darwin's extensive research and observations laid the groundwork for his groundbreaking theory of evolution by natural selection, which revolutionized our understanding of life on Earth. The theory posits that species evolve over time through a gradual process of natural selection, where individuals with traits that enhance their survival and reproduction have a greater chance of passing on their genes to subsequent generations. Darwin's evolutionary theory has had a profound impact on scientific inquiry, challenging long-held beliefs and shaping our comprehension of the origins and diversity of life.",
+	// 			questions: [
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"Fill in the blank with the appropriate word: Darwin's expedition _____ the globe.",
+	// 					options: ["circulated", "circumnavigated", "orbited"],
+	// 					answer: "circumnavigated",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"Which word best completes the sentence? In 1831, English scientist Charles Darwin embarked on a five-year voyage ____ the HMS Beagle, which circumnavigated the globe.",
+	// 					options: ["across", "aboard", "around", "at"],
+	// 					answer: "aboard",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"What was the primary goal of Charles Darwin's voyage on the HMS Beagle?",
+	// 					options: [
+	// 						"To search for new landmasses",
+	// 						"To study the Earth's geology",
+	// 						"To observe and document the diversity of life",
+	// 						"To test his theory of evolution",
+	// 					],
+	// 					answer: "To observe and document the diversity of life",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"According to the passage, which of the following did Darwin NOT observe and document during his voyage on the HMS Beagle?",
+	// 					options: [
+	// 						"Flora of South America",
+	// 						"Fauna of the Galapagos Islands",
+	// 						"Climate patterns in Australia",
+	// 						"Habitats of underwater species",
+	// 					],
+	// 					answer: "Habitats of underwater species",
+	// 				},
+	// 			],
+	// 		},
+	// 		{
+	// 			typeOfKnowledge: "Vocabulary",
+	// 			questions: [
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"Which of the following words is NOT a synonym of 'ephemeral'?",
+	// 					options: ["fleeting", "temporary", "permanent", "evanescent"],
+	// 					answer: "permanent",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"Which of the following words is NOT a synonym of 'edacious'?",
+	// 					options: ["ravenous", "voracious", "insatiable", "satiated"],
+	// 					answer: "satiated",
+	// 				},
+	// 				{
+	// 					typeOfQuestion: "Multiple choice",
+	// 					question:
+	// 						"It is time to test your vocabulary. Which word is the antonym of 'happy'?",
+	// 					options: ["Sad", "Angry", "Excited", "Confused"],
+	// 					answer: "Sad",
+	// 				},
+	// 			],
+	// 		},
+	// 	]);
+	// }, []);
 	// Assuming your JSON data is stored in a variable named `jsonData`
 	function convertToStructuredExcel(data: ExcelDataItem[]): StructuredExcel[] {
 		const result: StructuredExcel[] = [];

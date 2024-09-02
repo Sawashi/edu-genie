@@ -167,11 +167,13 @@ function correctJSONString(inputString: string): string {
 function convertStringToResponseExamArray(
 	jsonString: string
 ): ResponseExam[] | null {
+	console.log("String to convert:");
+	console.log(jsonString);
 	try {
 		// Correct the JSON string before parsing
 		const correctedJSONString = correctJSONString(jsonString);
-		console.log("Corrected string:");
-		console.log(correctedJSONString);
+		// console.log("Corrected string:");
+		// console.log(correctedJSONString);
 
 		// Parse the corrected JSON string to an array
 		const parsedArray: ResponseExam[] = JSON.parse(correctedJSONString);
@@ -197,6 +199,8 @@ function convertStringToResponseExamArray(
 	}
 }
 function extractDataBetweenBrackets(aiResponse: string) {
+	console.log("String to extract:");
+	console.log(aiResponse);
 	// Regular expression to match content between [{ and }]
 	const regex = /\[\{([\s\S]*?)\}\]/;
 	const match = aiResponse.match(regex);
@@ -226,7 +230,9 @@ export function convertResponseExamToResponseQuestion(
 	);
 	return responseQuestions;
 }
-export async function generateExam(dataSource: StructuredExcel[]) {
+export async function generateExam(
+	dataSource: StructuredExcel[]
+): Promise<InterfaceExam[]> {
 	const generateAndConvertQuestion = async (
 		typeOfKnowledge: string,
 		topic: string,
@@ -392,8 +398,8 @@ export async function generateExam(dataSource: StructuredExcel[]) {
 				typeOfKnowledge: item.typeOfKnowledge,
 				questions: questions,
 			});
-			console.log("Final result:");
-			console.log(result);
+			// console.log("Final result:");
+			// console.log(result);
 		} else {
 			// Generate paragraph questions
 			let hints: string[] = [];
@@ -510,8 +516,12 @@ export async function generateExam(dataSource: StructuredExcel[]) {
 				paragraph: paragraphResult,
 				questions: questions,
 			});
-			console.log("Final result:");
-			console.log(result);
+			// console.log("Final result:");
+			// console.log(result);
 		}
 	}
+	if (result.length > 0) {
+		return result;
+	}
+	return [];
 }

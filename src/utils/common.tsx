@@ -23,7 +23,7 @@ import { StructuredRow } from "src/interfaces";
 export const genAI = new GoogleGenerativeAI(apikey);
 export async function runGemini(msg: string) {
 	//delay 1s for not spamming the api
-	await new Promise((resolve) => setTimeout(resolve, 1000));
+	await new Promise((resolve) => setTimeout(resolve, 3000));
 	// For dialog language tasks (like chat), use the gemini-pro model
 	const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
