@@ -6,6 +6,7 @@ import {
 	StructuredRow,
 } from "src/interfaces";
 import { runGemini } from "../utils/common";
+import { message } from "antd";
 
 export async function translateToEnglish(text: string): Promise<string> {
 	const prefix = "translate to english: ";
@@ -300,6 +301,7 @@ export async function generateExam(
 	};
 	const result: InterfaceExam[] = [];
 	for (const item of dataSource) {
+		message.info("Generating exam for " + item.typeOfKnowledge);
 		if (item.typeOfSection == "Single question combination") {
 			const questions: ResponseQuestion[] = [];
 			// Generate single questions
@@ -398,6 +400,7 @@ export async function generateExam(
 				typeOfKnowledge: item.typeOfKnowledge,
 				questions: questions,
 			});
+			message.success("Generated exam for " + item.typeOfKnowledge);
 			// console.log("Final result:");
 			// console.log(result);
 		} else {
@@ -516,6 +519,7 @@ export async function generateExam(
 				paragraph: paragraphResult,
 				questions: questions,
 			});
+			message.success("Generated exam for " + item.typeOfKnowledge);
 			// console.log("Final result:");
 			// console.log(result);
 		}

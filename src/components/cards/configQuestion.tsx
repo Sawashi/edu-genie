@@ -38,6 +38,7 @@ const ConfigQuestion: React.FC<ConfigQuestionProps> = (props) => {
 		props.setLoading(true);
 		let result: InterfaceExam[] = await generateExam(topicConfig);
 		props.setResultData(result);
+		props.setLoading(false);
 	}
 
 	const handleTypeOfSectionChange = (

@@ -74,6 +74,9 @@ const CustomSlider: React.FC<SliderProps> = (props) => {
 				<Menu.Item key="transcribe" icon={<HomeOutlined />}>
 					<Link href="/transcribe-for-mp3">MP3 transcribe</Link>
 				</Menu.Item>
+				<Menu.Item key="youtube" icon={<HomeOutlined />}>
+					<Link href="/transcribe-for-youtube">Youtube transcribe</Link>
+				</Menu.Item>
 				<Menu.Item key="help" icon={<QuestionCircleOutlined />}>
 					<Link href="/help">Help</Link>
 				</Menu.Item>
