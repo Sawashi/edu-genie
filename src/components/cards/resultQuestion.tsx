@@ -4,7 +4,7 @@ import { InterfaceExam } from "src/interfaces";
 import { runGemini } from "src/utils/common";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
-
+import htmlDocx from "html-docx-js";
 const { Title, Paragraph } = Typography;
 
 interface ResultExamProps {
@@ -48,6 +48,32 @@ const ResultExam: React.FC<ResultExamProps> = ({ dataSource }) => {
 			pdf.save("result-exam.pdf");
 		}
 	};
+	const downloadWord = () => {
+		const element = document.getElementById("result-exam-content");
+		if (element) {
+			// Wrap the innerHTML of the element in basic HTML structure
+			const content = `
+				<html>
+					<head>
+						<meta charset="utf-8">
+						<title>Result Exam</title>
+					</head>
+					<body>${element.innerHTML}</body>
+				</html>
+			`;
+
+			// Create a Blob with the HTML content
+			const blob = new Blob([content], {
+				type: "application/msword;charset=utf-8",
+			});
+
+			// Create a download link and click it programmatically
+			const link = document.createElement("a");
+			link.href = URL.createObjectURL(blob);
+			link.download = "result-exam.doc";
+			link.click();
+		}
+	};
 
 	return (
 		<Card
@@ -59,13 +85,15 @@ const ResultExam: React.FC<ResultExamProps> = ({ dataSource }) => {
 		>
 			<Title level={3}>Exam Results</Title>
 
-			<Button
-				type="primary"
-				onClick={downloadPDF}
-				style={{ marginBottom: "20px" }}
-			>
-				Download PDF
-			</Button>
+			<div style={{ display: "flex", gap: "10px", marginBottom: "20px" }}>
+				<Button type="primary" onClick={downloadPDF}>
+					Download PDF
+				</Button>
+
+				<Button type="default" onClick={downloadWord}>
+					Download Word
+				</Button>
+			</div>
 
 			{/* Container to capture for PDF */}
 			<div id="result-exam-content">

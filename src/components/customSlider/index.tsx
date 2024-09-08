@@ -9,6 +9,8 @@ import {
 	EnvironmentOutlined,
 	StarOutlined,
 	QuestionCircleOutlined,
+	AudioOutlined,
+	YoutubeOutlined,
 } from "@ant-design/icons";
 import Link from "next/link";
 import { Typography } from "antd";
@@ -50,7 +52,7 @@ const CustomSlider: React.FC<SliderProps> = (props) => {
 						fontWeight: "bold",
 					}}
 				>
-					K.E.T
+					EduGenie
 				</Title>
 			</div>
 			<Avatar
@@ -71,10 +73,10 @@ const CustomSlider: React.FC<SliderProps> = (props) => {
 				<Menu.Item key="home" icon={<HomeOutlined />}>
 					<Link href="/home">Home</Link>
 				</Menu.Item>
-				<Menu.Item key="transcribe" icon={<HomeOutlined />}>
+				<Menu.Item key="transcribe" icon={<AudioOutlined />}>
 					<Link href="/transcribe-for-mp3">MP3 transcribe</Link>
 				</Menu.Item>
-				<Menu.Item key="youtube" icon={<HomeOutlined />}>
+				<Menu.Item key="youtube" icon={<YoutubeOutlined />}>
 					<Link href="/transcribe-for-youtube">Youtube transcribe</Link>
 				</Menu.Item>
 				<Menu.Item key="help" icon={<QuestionCircleOutlined />}>

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Input, Button, Card, Spin, message } from "antd";
+import { Input, Button, Card, Spin, message, QRCode } from "antd";
+import saveAs from "file-saver";
 
 const { TextArea } = Input;
 
@@ -8,6 +9,7 @@ const YouTubeTranscriber: React.FC = () => {
 	const [transcript, setTranscript] = useState("");
 	const [summary, setSummary] = useState("");
 	const [loading, setLoading] = useState(false);
+	const [qrCodeUrl, setQrCodeUrl] = useState<string | null>(null);
 
 	const handleTranscribe = async () => {
 		setLoading(true);
@@ -54,16 +56,35 @@ const YouTubeTranscriber: React.FC = () => {
 		}
 		setLoading(false);
 	};
+	const handleGenerateQRCode = () => {
+		if (youtubeUrl) {
+			setQrCodeUrl(youtubeUrl);
+		}
+	};
+
+	const handleDownloadQRCode = async () => {
+		if (qrCodeUrl) {
+			const canvas = document.getElementById("qr-code") as HTMLCanvasElement;
+			if (canvas) {
+				const blob = await new Promise<Blob>((resolve) =>
+					canvas.toBlob((blob) => resolve(blob!), "image/png")
+				);
+				saveAs(blob, "qrcode.png");
+			}
+		}
+	};
 
 	return (
 		<div style={{ maxWidth: "800px", margin: "0 auto", padding: "20px" }}>
 			<Card title="YouTube Video Transcriber" bordered={false}>
+				<h5>URL example: https://www.youtube.com/watch?v=abcd</h5>
 				<Input
 					placeholder="Enter YouTube URL"
 					value={youtubeUrl}
 					onChange={(e) => setYoutubeUrl(e.target.value)}
 					style={{ marginBottom: "20px" }}
 				/>
+
 				<Button
 					type="primary"
 					onClick={handleTranscribe}
@@ -71,9 +92,28 @@ const YouTubeTranscriber: React.FC = () => {
 				>
 					Transcribe & Summarize
 				</Button>
+				<Button
+					type="default"
+					onClick={handleGenerateQRCode}
+					disabled={!youtubeUrl}
+					style={{ marginLeft: "10px" }}
+				>
+					Generate QR Code
+				</Button>
 				{loading && <Spin style={{ marginLeft: "20px" }} />}
 			</Card>
-
+			{qrCodeUrl && (
+				<Card title="QR Code" bordered={false} style={{ marginTop: "20px" }}>
+					<QRCode
+						value={qrCodeUrl}
+						size={256}
+						style={{ marginBottom: "10px" }}
+					/>
+					<Button type="primary" onClick={handleDownloadQRCode}>
+						Download QR Code
+					</Button>
+				</Card>
+			)}
 			<Card title="Transcribe" bordered={false} style={{ marginTop: "20px" }}>
 				<TextArea value={transcript} rows={10} readOnly />
 			</Card>
