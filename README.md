@@ -1,5 +1,5 @@
 
-Website: [https://ket-chi.vercel.app/](https://edu-genie.vercel.app/home)
+Website: [https://edu-genie.vercel.app/home].
 
 Demo: https://youtu.be/LjTUtSBL_RU?si=B6OaNwds7gw70xjG
 
